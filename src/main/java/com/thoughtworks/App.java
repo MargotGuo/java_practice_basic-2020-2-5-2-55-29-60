@@ -17,9 +17,17 @@ public class App {
    *
    * @param selectedItems 选择的菜品信息
    */
+
   public static String bestCharge(String selectedItems) {
     // 此处补全代码
-    return selectedItems;
+    CalcDetail calcDetail = new CalcDetail(selectedItems);
+    String outputInfo = "============= 订餐明细 =============\n"
+        + calcDetail.getAllFood()
+        + "-----------------------------------\n"
+        + calcDetail.getDiscountInfo()
+        + "总计：" + calcDetail.getFinalPrice() + "元\n"
+        + "===================================";;
+    return outputInfo;
   }
 
   /**
