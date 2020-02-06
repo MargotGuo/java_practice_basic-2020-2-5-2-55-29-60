@@ -2,39 +2,35 @@ package com.thoughtworks;
 
 import java.util.Arrays;
 
-import static com.thoughtworks.App.*;
+import static com.thoughtworks.App.getItemIds;
+import static com.thoughtworks.App.getItemNames;
 
 public class Food {
   private String foodName;
+  private String foodID;
   private int count;
-  private double sumPrice;
-  private double discount;
+  private int indexInFoodList;
 
   public Food(String foodID, int count) {
+    this.foodID = foodID;
     this.count = count;
-    int indexInFoodList = getIndex(foodID);
+    this.indexInFoodList =  Arrays.asList(getItemIds()).indexOf(foodID);
     this.foodName = getItemNames()[indexInFoodList];
-    this.sumPrice = count * getItemPrices()[indexInFoodList];
-    this.discount = Arrays.asList(getHalfPriceIds()).contains(foodID) ? 0.5 * sumPrice : 0;
-  }
-
-  public static int getIndex(String id) {
-    return Arrays.asList(getItemIds()).indexOf(id);
   }
 
   public String getName() {
     return foodName;
   }
 
-  public double getSumPrice() {
-    return sumPrice;
-  }
-
-  public double getDiscount() {
-    return discount;
-  }
-
   public int getCount() {
     return count;
+  }
+
+  public String getFoodID() {
+    return foodID;
+  }
+
+  public int getIndex() {
+    return indexInFoodList;
   }
 }

@@ -1,6 +1,11 @@
 package com.thoughtworks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.thoughtworks.App.getHalfPriceIds;
+import static com.thoughtworks.App.getItemPrices;
 
 public class CalcDetail {
   private double sumBeforeDiscount;
@@ -10,7 +15,7 @@ public class CalcDetail {
   private String halfPriceFood;
   private String allFood;
   private String finalPrice;
-  private String discountInfo = "";
+  private String discountInfo;
 
   public CalcDetail(String selectedItems) {
     Food[] foodList = saveFoodByArray(selectedItems);
@@ -21,7 +26,7 @@ public class CalcDetail {
 
   public Food[] saveFoodByArray(String selectedItems) {
     String[] itemArray = selectedItems.split(",");
-    ArrayList<Food> foodList = new ArrayList<Food>();
+    List<Food> foodList = new ArrayList<>();
     for (String foodInfo: itemArray) {
       String foodId = foodInfo.split(" x ")[0];
       int foodCount = Integer.parseInt(foodInfo.split(" x ")[1]);
@@ -34,22 +39,24 @@ public class CalcDetail {
     StringBuilder allFood = new StringBuilder();
     StringBuilder halfPriceFood = new StringBuilder();
     for (Food food : foodList) {
-      sumBeforeDiscount += food.getSumPrice();
+      double sumPriceOfThisFood = getItemPrices()[food.getIndex()] * food.getCount();
+      this.sumBeforeDiscount += sumPriceOfThisFood;
       allFood.append(food.getName()).append(" x ").append(food.getCount()).append(" = ")
-          .append(formatDoubleNumber(food.getSumPrice())).append("元\n");
-      if (food.getDiscount() != 0) {
-        discountInPlanB += food.getDiscount();
+          .append(formatDoubleNumber(sumPriceOfThisFood)).append("元\n");
+      if (Arrays.asList(getHalfPriceIds()).contains(food.getFoodID())) {
+        this.discountInPlanB += 0.5 * sumPriceOfThisFood;
         halfPriceFood.append(food.getName()).append("，");
       }
     }
+    this.discountInPlanA = sumBeforeDiscount >= 30 ? 6 : 0;
     this.allFood = allFood.toString();
     this.halfPriceFood = halfPriceFood.toString();
-    discountInPlanA = sumBeforeDiscount >= 30 ? 6 : 0;
   }
 
   public void chooseBetterDiscount() {
     if (discountInPlanA == 0 && discountInPlanB == 0) {
       this.finalDiscount = 0;
+      this.discountInfo = "";
     } else if (discountInPlanA >= discountInPlanB) {
       this.finalDiscount = discountInPlanA;
       this.discountInfo = "使用优惠:\n"
@@ -65,7 +72,7 @@ public class CalcDetail {
   }
 
   /* 如果double类型的数字的数值为整数，则转换成整型输出，如果不为整数，则输出原数字 */
-  public String formatDoubleNumber(double inputNumber) {
+  public static String formatDoubleNumber(double inputNumber) {
     if(Math.round(inputNumber) - inputNumber == 0) {
       return String.valueOf((int)inputNumber);
     }
